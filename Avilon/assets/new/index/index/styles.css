@@ -1,0 +1,43 @@
+/* Custom CSS for smooth animations and better styling */
+
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.modal-header, .modal-footer {
+    border: none;
+}
+
+.modal-body table {
+    margin: 20px 0;
+}
+
+.modal-body .medicine-table th, .modal-body .medicine-table td {
+    text-align: center;
+}
+
+.request-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.request-btn:hover {
+    background-color: #0056b3;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

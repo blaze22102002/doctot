@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --default-color: #0ea8ac;
+            --heading-color: #0ea8ac;
+            --surface-color: #ffffff;
+            --accent-color: #12d6db;
+            --contrast-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--default-color);
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--contrast-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--heading-color);
+            color: var(--contrast-color);
+        }
+
+        .form-section {
+            border: 1px solid var(--default-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Back Button -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: var(--heading-color);">
+            <a class="navbar-brand text-white" href="#" onclick="history.back(); return false;">&larr; Back to Dashboard</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Patient Details</h2>
+    
+        <!-- Diagnosis Section -->
+        <div class="form-section">
+            <h4>Add Diagnosis</h4>
+            <input type="text" class="form-control mb-3" id="diagnosis" placeholder="Enter diagnosis">
+        </div>
+    
+        <!-- Symptoms Section -->
+        <div class="form-section">
+            <h4>Add Symptoms</h4>
+            <div id="symptoms-list">
+                <input type="text" class="form-control mb-3" placeholder="Enter symptom 1">
+            </div>
+        </div>
+    
+        <!-- Medicines Section -->
+        <div class="form-section">
+            <h4>Add Medicines</h4>
+            <div id="medicines-list">
+                <select name="" id="">
+                    <option value="None">None</option>
+                    <option value="Paracetamol">Paracetamol</option>
+                    <option value="Ibuprofen">Ibuprofen</option>
+                    <option value="Amoxicillin ">Amoxicillin </option>
+                </select>
+            </div>
+        </div>
+    
+        <!-- Lab Tests Section -->
+        <div class="form-section">
+            <h4>Add Lab Tests</h4>
+            <div id="lab-tests-list">
+                <select name="" id="">
+                    <option value="None">None</option>
+                    <option value="Complete Blood Count">Complete Blood Count</option>
+                    <option value="Liver Function Test ">Liver Function Test </option>
+                    <option value="Fasting Blood Sugar ">Fasting Blood Sugar </option>
+                </select>   
+            </div>
+        </div>
+
+        <!-- Doctor's Notes Section -->
+        <div class="form-section">
+            <h4>Doctor's Note</h4>
+            <textarea class="form-control" id="doctors-note" rows="4" placeholder="Enter doctor's note"></textarea>
+        </div>
+
+        <!-- Save Button -->
+        <button type="button" class="btn btn-primary" onclick="saveDetails()">Save</button>
+        <br><br>
+        <!-- Lab Report Section -->
+        <div class="form-section">
+            <h4>Download Lab Report</h4>
+            <select class="form-control mb-3" id="lab-report-type">
+                <option value="" disabled selected>Select Report Type</option>
+                <option value="sugar">Sugar Report</option>
+                <option value="blood-pressure">Blood Pressure Report</option>
+                <option value="cholesterol">Cholesterol Report</option>
+            </select>
+            <button type="button" class="btn btn-primary" onclick="generateLabReport()">Download Lab Report</button>
+        </div>
+
+        <h4 class="mt-5">Medical History</h4>
+        <table class="table table-bordered" id="medical-history-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Symptoms</th>
+                    <th>Medicines</th>
+                    <th>Lab Tests</th>
+                    <th>Doctor's Note</th>
+                </tr>
+            </thead>
+            <tbody id="medical-history-body">
+                <!-- History entries will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- jsPDF Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <!-- Bootstrap JS (Optional, for interactivity) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Patient ID (can be dynamically assigned in a real app)
+        const patientId = "patient123";  // Replace this with a unique identifier for each patient
+
+        function getCurrentDate() {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function saveDetails() {
+            const diagnosis = document.getElementById('diagnosis').value;
+            const doctorsNote = document.getElementById('doctors-note').value;
+
+            const symptoms = Array.from(document.querySelectorAll('#symptoms-list input'))
+                .map(input => input.value)
+                .filter(value => value);
+            const medicines = Array.from(document.querySelectorAll('#medicines-list input'))
+                .map(input => input.value)
+                .filter(value => value);
+            const labTests = Array.from(document.querySelectorAll('#lab-tests-list input'))
+                .map(input => input.value)
+                .filter(value => value);
+
+            const currentDate = getCurrentDate();
+        
+            const newEntry = {
+                date: currentDate,
+                diagnosis,
+                symptoms: symptoms.join(', '),
+                medicines: medicines.join(', '),
+                labTests: labTests.join(', '),
+                doctorsNote
+            };
+
+            // Get existing history for the current patient from local storage, or initialize an empty array
+            let medicalHistory = JSON.parse(localStorage.getItem(`medicalHistory_${patientId}`)) || [];
+            medicalHistory.push(newEntry);
+            
+            // Save updated history back to local storage for the current patient
+            localStorage.setItem(`medicalHistory_${patientId}`, JSON.stringify(medicalHistory));
+
+            addRowToTable(newEntry);  // Add new entry to the table
+
+            // Clear input fields
+            document.getElementById('diagnosis').value = '';
+            document.getElementById('doctors-note').value = '';
+            document.querySelectorAll('#symptoms-list input').forEach(input => input.value = '');
+            document.querySelectorAll('#medicines-list input').forEach(input => input.value = '');
+            document.querySelectorAll('#lab-tests-list input').forEach(input => input.value = '');
+        }
+
+        function addRowToTable(entry) {
+            const tableBody = document.getElementById('medical-history-body');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${entry.date}</td>
+                <td>${entry.diagnosis}</td>
+                <td>${entry.symptoms}</td>
+                <td>${entry.medicines}</td>
+                <td>${entry.labTests}</td>
+                <td>${entry.doctorsNote}</td>
+            `;
+
+            tableBody.appendChild(row);
+        }
+
+        // Load medical history for the current patient from local storage on page load
+        function loadMedicalHistory() {
+            const medicalHistory = JSON.parse(localStorage.getItem(`medicalHistory_${patientId}`)) || [];
+
+            medicalHistory.forEach(entry => {
+                addRowToTable(entry);
+            });
+        }
+
+        window.onload = loadMedicalHistory;
+
+        function generateLabReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const reportType = document.getElementById('lab-report-type').value;
+            const currentDate = getCurrentDate();
+            let labTests = '';
+
+            switch (reportType) {
+                case 'sugar':
+                    labTests = "Fasting Blood Sugar, Postprandial Blood Sugar, HbA1c";
+                    break;
+                case 'blood-pressure':
+                    labTests = "Systolic BP, Diastolic BP, Mean Arterial Pressure";
+                    break;
+                default:
+                    alert("No report found for the selected type.");
+                    return;
+            }
+
+            doc.setFontSize(14);
+            doc.text("Lab Test Report", 10, 10);
+            doc.text(`Date: ${currentDate}`, 10, 20);
+            doc.text(`Report Type: ${reportType.replace("-", " ")}`, 10, 30);
+            doc.text("Lab Tests Conducted:", 10, 40);
+            doc.text(labTests, 10, 50);
+
+            doc.save(`${reportType}_Report_${currentDate}.pdf`);
+        }
+    </script>
+</body>
+</html>

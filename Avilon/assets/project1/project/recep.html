@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            
+            background: linear-gradient(to right, #ffffff, #22AFB2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-custom {
+            background-color: #22AFB2;
+            color: white;
+            border: none;
+        }
+
+        .btn-custom-danger {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+
+        .btn-custom-success {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            padding: 10px;
+        }
+
+        .nav-btn {
+            margin-right: 63px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="btn btn-custom nav-btn" onclick="showSection('homepage')">Home</button>
+        <button class="btn btn-custom nav-btn" onclick="showSection('patient-section')">Patients</button>
+        <button class="btn btn-custom nav-btn" onclick="showSection('search-section')">Search Patients</button>
+        <button class="btn btn-custom nav-btn" onclick="showSection('booking-section')">Book Appointment</button>
+        <button class="btn btn-custom nav-btn" onclick="displayTodaysAppointments()">Today's Appointments</button>
+        <button class="btn btn-custom nav-btn" onclick="logout()">Logout</button>
+    </nav>
+
+    <!-- Homepage Section -->
+    <div id="homepage">
+        <div class="container">
+            <h1 class="mt-4">Welcome to the Receptionist Page</h1>
+            <p>Select an option from the navigation bar to get started.</p>
+        </div>
+    </div>
+
+    <!-- Patient Section -->
+    <div id="patient-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Patient List</h2>
+            <table class="table table-bordered" id="patient-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button class="btn btn-custom btn-success" onclick="showSection('new-patient-section')">Register New Patient</button>
+        </div>
+    </div>
+
+    <!-- New Patient Registration Section -->
+    <div id="new-patient-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Register New Patient</h2>
+            <form id="new-patient-form" onsubmit="event.preventDefault(); addPatient();">
+                <div class="form-group">
+                    <label for="new-name">Name:</label>
+                    <input type="text" id="new-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-age">Age:</label>
+                    <input type="number" id="new-age" class="form-control" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="new-address">Address:</label>
+                    <input type="text" id="new-address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-contact">Contact:</label>
+                    <input type="text" id="new-contact" class="form-control" required pattern="[0-9]{10}" title="Enter a valid 10-digit contact number">
+                </div>
+                <button type="submit" class="btn btn-custom btn-success">Register</button>
+                <button type="button" class="btn btn-custom" onclick="showSection('patient-section')">Back</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Patient Section -->
+    <div id="edit-patient-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Edit Patient</h2>
+            <form id="edit-patient-form" onsubmit="event.preventDefault(); updatePatient();">
+                <div class="form-group">
+                    <label for="edit-id">ID:</label>
+                    <input type="number" id="edit-id" class="form-control" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="edit-name">Name:</label>
+                    <input type="text" id="edit-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-age">Age:</label>
+                    <input type="number" id="edit-age" class="form-control" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="edit-address">Address:</label>
+                    <input type="text" id="edit-address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-contact">Contact:</label>
+                    <input type="text" id="edit-contact" class="form-control" required pattern="[0-9]{10}" title="Enter a valid 10-digit contact number">
+                </div>
+                <button type="submit" class="btn btn-custom btn-success">Update</button>
+                <button type="button" class="btn btn-custom" onclick="showSection('patient-section')">Back</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div id="search-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Search Patients</h2>
+            <label for="search-query">Search:</label>
+            <input type="text" id="search-query" class="form-control" placeholder="Search by ID or Name">
+            <button class="btn btn-custom btn-success mt-2" onclick="searchPatients()">Search</button>
+            <div id="search-results" class="hidden">
+                <h3 class="mt-4">Search Results</h3>
+                <table class="table table-bordered" id="search-results-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Address</th>
+                            <th>Contact</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Section -->
+    <div id="booking-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Book Appointment</h2>
+            <form id="booking-form">
+                <div class="form-group">
+                    <label for="patient-id">Patient ID:</label>
+                    <input type="number" id="patient-id" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="department">Department:</label>
+                    <select id="department" class="form-control" required onchange="populateDoctors()">
+                        <option value="">Select Department</option>
+                        <option value="Cardiac">Cardiac</option>
+                        <option value="General">General</option>
+                        <option value="Physician">Physician</option>
+                        <option value="Ortho">Ortho</option>
+                        <option value="Pediatrician">Pediatrician</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="doctor">Doctor:</label>
+                    <select id="doctor" class="form-control" required>
+                        <option value="">Select Doctor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-date">Date:</label>
+                    <input type="date" id="appointment-date" class="form-control" required>
+                </div>
+                <button type="button" class="btn btn-custom btn-success" onclick="generateBill()">Generate Bill</button>
+                <button type="button" class="btn btn-custom" onclick="showSection('search-section')">Back</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bill Section -->
+    <div id="bill-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Bill Details</h2>
+            <div id="bill-details"></div>
+            <button class="btn btn-custom" onclick="showSection('patient-section')">Back to Patients</button>
+        </div>
+    </div>
+
+    <!-- Today's Appointments Section -->
+    <div id="todays-appointments-section" class="hidden">
+        <div class="container">
+            <h2 class="mt-4">Today's Appointments</h2>
+            <table class="table table-bordered" id="todays-appointments-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Department</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize patient data
+        let patients = [];
+        let appointments = [];
+
+        // Function to show the appropriate section
+        function showSection(section) {
+            const sections = ['homepage', 'patient-section', 'new-patient-section', 'edit-patient-section', 'search-section', 'booking-section', 'bill-section', 'todays-appointments-section'];
+            sections.forEach(sec => document.getElementById(sec).classList.add('hidden'));
+            document.getElementById(section).classList.remove('hidden');
+        }
+
+        // Add new patient
+        function addPatient() {
+            const name = document.getElementById('new-name').value;
+            const age = document.getElementById('new-age').value;
+            const address = document.getElementById('new-address').value;
+            const contact = document.getElementById('new-contact').value;
+            const id = patients.length + 1;
+
+            const newPatient = { id, name, age, address, contact };
+            patients.push(newPatient);
+
+            updatePatientTable();
+            showSection('patient-section');
+        }
+
+        // Update the patient table
+        function updatePatientTable() {
+            const patientTableBody = document.querySelector('#patient-table tbody');
+            patientTableBody.innerHTML = '';
+
+            patients.forEach(patient => {
+                const row = `<tr>
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.address}</td>
+                    <td>${patient.contact}</td>
+                    <td>
+                        <button class="btn btn-custom-success" onclick="editPatient(${patient.id})">Edit</button>
+                        <button class="btn btn-custom-danger" onclick="deletePatient(${patient.id})">Delete</button>
+                        <button class="btn btn-custom-success" onclick="bookAppointment(${patient.id})">Book Now</button>
+            
+                    </td>
+                </tr>`;
+                patientTableBody.innerHTML += row;
+            });
+        }
+
+        // Edit patient
+        function editPatient(id) {
+            const patient = patients.find(p => p.id === id);
+
+            document.getElementById('edit-id').value = patient.id;
+            document.getElementById('edit-name').value = patient.name;
+            document.getElementById('edit-age').value = patient.age;
+            document.getElementById('edit-address').value = patient.address;
+            document.getElementById('edit-contact').value = patient.contact;
+
+            showSection('edit-patient-section');
+        }
+
+        // Update patient details
+        function updatePatient() {
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('edit-name').value;
+            const age = document.getElementById('edit-age').value;
+            const address = document.getElementById('edit-address').value;
+            const contact = document.getElementById('edit-contact').value;
+
+            const patientIndex = patients.findIndex(p => p.id == id);
+            patients[patientIndex] = { id: parseInt(id), name, age, address, contact };
+
+            updatePatientTable();
+            showSection('patient-section');
+        }
+
+        // Delete patient
+        function deletePatient(id) {
+            patients = patients.filter(p => p.id !== id);
+            updatePatientTable();
+        }
+
+        // Search patients
+        function searchPatients() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            const results = patients.filter(p => p.name.toLowerCase().includes(query) || p.id.toString().includes(query));
+
+            const searchResultsTable = document.querySelector('#search-results-table tbody');
+            searchResultsTable.innerHTML = '';
+
+            results.forEach(patient => {
+                const row = `<tr>
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.address}</td>
+                    <td>${patient.contact}</td>
+                    <td>
+                        <button class="btn btn-custom-success" onclick="editPatient(${patient.id})">Edit</button>
+                        <button class="btn btn-custom-danger" onclick="deletePatient(${patient.id})">Delete</button>
+                        <button class="btn btn-custom-success" onclick="bookAppointment(${patient.id})">Book Now</button>
+            
+                    
+                    </td>
+                </tr>`;
+                searchResultsTable.innerHTML += row;
+            });
+
+            document.getElementById('search-results').classList.remove('hidden');
+        }
+
+
+        // Book appointment
+function bookAppointment(patientId) {
+    document.getElementById('patient-id').value = patientId;
+    showSection('booking-section');
+}
+
+
+
+        // Book appointment
+        function generateBill() {
+            const patientId = document.getElementById('patient-id').value;
+            const department = document.getElementById('department').value;
+            const doctor = document.getElementById('doctor').value;
+            const date = document.getElementById('appointment-date').value;
+
+            const patient = patients.find(p => p.id == patientId);
+
+            if (!patient) {
+                alert('Patient not found!');
+                return;
+            }
+            const registrationFee = 50;
+            const consultationFee = 100;
+            const total=registrationFee+consultationFee;
+            const billDetails = `
+                <h4>Patient Details</h4>
+                <p><strong>ID:</strong> ${patient.id}</p>
+                <p><strong>Name:</strong> ${patient.name}</p>
+                <p><strong>Department:</strong> ${department}</p>
+                <p><strong>Doctor:</strong> ${doctor}</p>
+                <p><strong>Date:</strong> ${date}</p>
+                <p><strong>Registration Fee:</strong> ${registrationFee}</p>
+                <p><strong>Consultation Fee:</strong> ${consultationFee}</p>
+                <p><strong>Fees:</strong> ${total}(Consultation + Registration)</p>
+            `;
+            document.getElementById('bill-details').innerHTML = billDetails;
+            appointments.push({ patientId, department, doctor, date });
+            showSection('bill-section');
+        }
+
+        // Display today's appointments
+        function displayTodaysAppointments() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayAppointments = appointments.filter(a => a.date === today);
+
+            const appointmentsTableBody = document.querySelector('#todays-appointments-table tbody');
+            appointmentsTableBody.innerHTML = '';
+
+              // If no appointments, show a message
+              if (todayAppointments.length === 0) {
+                const row = appointmentsTableBody.insertRow();
+                const cell = row.insertCell(0);
+                cell.colSpan = 7;
+                cell.textContent = 'No appointments for today';
+                cell.style.textAlign = 'center';
+            }
+
+
+            todayAppointments.forEach(appointment => {
+                const patient = patients.find(p => p.id == appointment.patientId);
+                const row = `<tr>
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.address}</td>
+                    <td>${patient.contact}</td>
+                    <td>${appointment.department}</td>
+                    <td>${appointment.doctor}</td>
+                    <td>${appointment.date}</td>
+                </tr>`;
+                appointmentsTableBody.innerHTML += row;
+               
+            });
+             
+            showSection('todays-appointments-section');
+        }
+
+        // Populate doctors based on department
+        function populateDoctors() {
+            const department = document.getElementById('department').value;
+            const doctorSelect = document.getElementById('doctor');
+            doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+
+            const doctors = {
+                'Cardiac': ['Dr. Smith', 'Dr. Heart'],
+                'General': ['Dr. John', 'Dr. Doe'],
+                'Physician': ['Dr. Allen', 'Dr. Kate'],
+                'Ortho': ['Dr. Brown', 'Dr. Ortho'],
+                'Pediatrician': ['Dr. James', 'Dr. Peter']
+            };
+
+            if (doctors[department]) {
+                doctors[department].forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor;
+                    option.textContent = doctor;
+                    doctorSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Logout function
+        function logout() {
+            alert("Logging out!");
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    </script>
+
+</body>
+
+</html>

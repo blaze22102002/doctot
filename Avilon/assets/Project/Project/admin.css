@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+.container-fluid {
+    width: 100%;
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(65, 66, 66, 0.75), rgba(0, 0, 0, 0.75)), url('images/adminbg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 8px 8%;
+}
+
+.navbar {
+    padding: 11px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo {
+    font-size: 42px;
+    color: white;
+    font-family: 'Times New Roman';
+    cursor: pointer;
+}
+
+.navbar .logout-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #ffffff, #22AFB2);
+    font-family: 'Times New Roman';
+    font-size:medium;
+    font-weight: 700;
+    color: #000000;
+    cursor: pointer;
+    border-radius: 30px;
+    border-bottom-right-radius: 0;
+    text-transform: uppercase;
+}
+
+.navbar .logout-btn:hover {
+    color: #ffffff;}
+
+/* Navbar on small screens */
+@media (max-width: 767px) {
+    .navbar {
+        position: relative;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar .logo {
+        font-size: 24px;
+    }
+
+    .navbar .logout-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 8px 16px;
+        font-size: medium;
+    }
+
+    .ml-auto {
+        justify-content: flex-end;
+        width: auto;
+    }
+}
+
+.management-link:hover {
+    text-decoration: none; 
+}
+
+.main-content {
+    margin-top: 17%;
+}
+
+.management-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 55px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.management-box:hover {
+    background: linear-gradient(to right, #adadad, #22AFB2);
+}
+
+.management-box h3 {
+    font-size: 26px;
+}
+
+.hover-box {
+    display: none;
+}
+
+.hover-box a {
+    display: block;
+    color: rgb(0, 0, 0);
+    background: linear-gradient(to right, #ffffff, #718080);
+    padding: 15px 0;
+    font-size: 18px;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 5px;
+}
+
+.hover-box a:hover {
+    background-color: black;
+    
+    text-decoration: none; 
+}
+
+.management-box:hover .hover-box {
+    display: block;
+}
+
+
+
+

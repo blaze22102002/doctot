@@ -1,0 +1,181 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap");
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  font-family: 'Poppins',sans-serif;
+}
+body{
+  width: 100%;
+  background-color: #f1f1f1;
+  position: relative;
+  display: flex
+}
+
+#menu {
+  background-color: rgb(46, 46, 46);
+  width: 200px;
+  height: 100%;
+}
+#menu .logo {
+  display: flex;
+  align-items: center;
+  padding: 30px 0 0 30px;
+}
+#menu .logo img{
+width: 50px;
+margin-right: 40px;
+
+
+}
+
+#menu .items{
+
+  margin-top: 40px;
+}
+
+
+#menu .items li{
+
+  list-style: none;
+  padding: 15px 0;
+  transition: 0.3s ease;
+
+
+}
+#menu .items li:hover{
+  background-color:rgb(206, 206, 210);
+  cursor: pointer;
+}
+#menu .items li:nth-child(1){
+  border-left: 4px solid white;
+}
+
+#menu .items li i{
+  color: grey;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: centre;
+  font-size: 14px;
+  margin: 0 10px 0 25px;
+}
+
+
+#menu .items li a{
+  text-decoration: none;
+  color: rgb(234, 224, 224);
+  font-weight: 300px;
+  margin: 0 10px 0 10px;
+  transition: 0.3s ease;
+
+}
+#menu .items li :hover i,
+#menu .items li :hover a{
+
+  color:green;
+}
+
+
+.navbar {
+  width: 100%;
+  height: 40px;
+  background-color:#22AFB2;
+  
+}
+.navbar-brand img {
+  height: 30px;
+
+}
+
+.navbar-nav .nav-link {
+  padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: #f5f5f5;
+  border-radius: 0.25rem;
+}
+
+.navbar-toggler {
+  border: none;
+  background: none;
+}
+
+.navbar-toggler .fas {
+  font-size: 1.5rem;
+}
+
+.text-reset {
+  color: #000;
+}
+
+.text-reset:hover {
+  color: #000000;
+}
+
+.badge-notification {
+  position: relative;
+  top: -10px;
+  right: -10px;
+}
+
+.dropdown-menu {
+  min-width: 10rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-item:hover {
+  background-color: #0a1b2c;
+}
+
+/* Search bar styles */
+.form-control {
+  border-radius: 0.25rem;
+}
+
+.btn-outline-success {
+  border-radius: 0.25rem;
+}
+
+/* Adjustments for spacing */
+.ms-lg-4 {
+  margin-left: 1.5rem; /* Adjust spacing as needed */
+}
+
+.ms-3 {
+  margin-left: 12; /* Adjust spacing as needed */
+}
+/* Ensure the overlay styles do not affect other elements */
+
+
+.overlay-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+}
+
+.close-btn:hover {
+  color: #FF5733;
+}

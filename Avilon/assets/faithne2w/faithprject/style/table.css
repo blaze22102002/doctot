@@ -1,0 +1,76 @@
+/* Table Container */
+/* .table-container {
+    overflow-x: auto; 
+    margin-top: 20px;
+} */
+
+/* General Table Styles */
+table {
+    width: 100%;
+    /* border-collapse: collapse; */
+    table-layout: auto; /* Allow the table to adjust its width */
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+ /* td { */
+    /* padding: 10px;
+    text-align: left;
+} */
+
+    
+
+
+
+/* Responsive Table Styles for screens below 769px */
+ 
+    /* Make sure the table is within a scrollable container */
+    /* .table-container {
+        overflow-x: auto;
+    }
+
+    /* Adjust table layout for smaller screens */
+     /* table { */
+        /* display: block; */
+         /* width: 100%;  */
+       /* overflow-x: auto; */
+        /* -webkit-overflow-scrolling: touch; */
+    /*  */
+
+     /* td {
+        display: flex;
+    }  */
+
+     /* thead tr {
+        display: flex; /* Hide table header on small screens */
+    /* }  */ 
+
+    /* tbody tr {
+        margin-bottom: 10px; /* Space between rows */
+        /* display: block;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+    } */
+/*  */
+    /* td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border: none;
+        position: relative;
+        text-align: right;
+        white-space: nowrap;
+    } */ 
+     
+    /* td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+    }
+} */

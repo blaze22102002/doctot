@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors Details</title>
+    <link rel="stylesheet" href="doctor.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container"><br><br>
+        <h1 style="font-size: 70px;">Doctors Details</h1>
+        <div class="header">
+            <div class="actions">
+                <button id="addDoctorBtn" class="btn btn-primary">Add New Doctor</button>
+                <button id="backBtn" class="btn btn-secondary">Back to Main</button>
+            </div>
+            <input type="text" id="searchDoctor" class="form-control" placeholder="Search Doctors">
+        </div>
+        <table class="doctor-table table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Date of Birth</th>
+                    <th>Date of Joining</th>
+                    <th>Department</th>
+                    <th>Specialization</th>
+                    <th>Consultations</th>
+                    <th>Salary</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="doctorList">
+                <!-- Doctor records will be added here -->
+            </tbody>
+        </table>
+
+        <div id="doctorModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add/Edit Doctor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="doctorForm">
+                            <input type="hidden" id="doctorId">
+                            <div class="form-group">
+                                <label for="doctorName">Name</label>
+                                <input type="text" class="form-control" id="doctorName" placeholder="Enter name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" placeholder="Enter date of birth" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doj">Date of Joining</label>
+                                <input type="date" class="form-control" id="doj" placeholder="Enter date of joining" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <input type="text" class="form-control" id="department" placeholder="Enter department" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="specialization">Specialization</label>
+                                <input type="text" class="form-control" id="specialization" placeholder="Enter specialization" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="consultations">Consultations</label>
+                                <input type="number" class="form-control" id="consultations" placeholder="Enter number of consultations" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary">Salary</label>
+                                <input type="number" class="form-control" id="salary" placeholder="Enter salary" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const doctorData = [
+            { name: "Dr. Sonu", dob: "1980-01-01", doj: "2010-06-15", department: "Cardiology", specialization: "Heart Specialist", consultations: 150, salary: 80000, disabled: false },
+            { name: "Dr. Kim", dob: "1975-05-15", doj: "2005-10-01", department: "Neurology", specialization: "Neuro Specialist", consultations: 100, salary: 95000, disabled: false },
+            { name: "Dr. Tan", dob: "1965-10-20", doj: "2000-01-01", department: "Orthopedics", specialization: "Bone Specialist", consultations: 200, salary: 70000, disabled: true }
+        ];
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDifference = today.getMonth() - birthDate.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function renderDoctorList() {
+            const doctorList = document.getElementById('doctorList');
+            doctorList.innerHTML = '';
+            doctorData.forEach((doctor, index) => {
+                const age = calculateAge(doctor.dob);
+                const row = document.createElement('tr');
+                row.innerHTML = 
+                    `<td>${doctor.name}</td>
+                    <td>${age}</td>
+                    <td>${doctor.dob}</td>
+                    <td>${doctor.doj}</td>
+                    <td>${doctor.department}</td>
+                    <td>${doctor.specialization}</td>
+                    <td>${doctor.consultations}</td>
+                    <td>${doctor.salary}</td>
+                    <td>${doctor.disabled ? 'Disabled' : 'Active'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm editBtn" data-index="${index}" ${doctor.disabled ? 'disabled' : ''}>Edit</button>
+                        <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${doctor.disabled ? 'Enable' : 'Disable'}</button>
+                    </td>`;
+                doctorList.appendChild(row);
+            });
+        }
+
+        function validateForm() {
+            const name = document.getElementById('doctorName').value;
+            const department = document.getElementById('department').value;
+            const specialization = document.getElementById('specialization').value;
+            const consultations = document.getElementById('consultations').value;
+            const salary = document.getElementById('salary').value;
+
+            // Name validation (letters and spaces, max 200 characters)
+            const namePattern = /^[A-Za-z\s]{1,200}$/;
+            if (!namePattern.test(name)) {
+                alert('Name should contain only letters and be up to 200 characters.');
+                return false;
+            }
+
+            // Department validation (only letters and spaces)
+            const letterPattern = /^[A-Za-z\s]+$/;
+            if (!letterPattern.test(department)) {
+                alert('Department should only contain letters.');
+                return false;
+            }
+
+            // Specialization validation (only letters and spaces)
+            if (!letterPattern.test(specialization)) {
+                alert('Specialization should only contain letters.');
+                return false;
+            }
+
+            // Consultations validation (should be a positive number)
+            if (isNaN(consultations) || consultations <= 0) {
+                alert('Consultations should be a valid positive number.');
+                return false;
+            }
+
+            // Salary validation (should be a positive number)
+            if (isNaN(salary) || salary <= 0) {
+                alert('Salary should be a valid positive number.');
+                return false;
+            }
+
+            return true;
+        }
+
+        document.getElementById('addDoctorBtn').addEventListener('click', function () {
+            document.getElementById('doctorForm').reset();
+            document.getElementById('doctorId').value = '';
+            $('#doctorModal').modal('show');
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function () {
+            window.location.href = 'admin.html'; 
+        });
+
+        document.getElementById('doctorForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            if (!validateForm()) return;
+
+            const id = document.getElementById('doctorId').value;
+            const name = document.getElementById('doctorName').value;
+            const dob = document.getElementById('dob').value;
+            const doj = document.getElementById('doj').value;
+            const department = document.getElementById('department').value;
+            const specialization = document.getElementById('specialization').value;
+            const consultations = parseInt(document.getElementById('consultations').value);
+            const salary = parseInt(document.getElementById('salary').value);
+
+            if (id) {
+                const doctorIndex = doctorData.findIndex(d => d.id == id);
+                doctorData[doctorIndex] = { name, dob, doj, department, specialization, consultations, salary, disabled: false };
+            } else {
+                doctorData.push({ name, dob, doj, department, specialization, consultations, salary, disabled: false });
+            }
+
+            $('#doctorModal').modal('hide');
+            renderDoctorList();
+        });
+
+        document.getElementById('searchDoctor').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#doctorList tr');
+            rows.forEach(row => {
+                const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('doctorList').addEventListener('click', function (e) {
+            if (e.target.classList.contains('editBtn')) {
+                const index = e.target.dataset.index;
+                const doctor = doctorData[index];
+                document.getElementById('doctorId').value = index;
+                document.getElementById('doctorName').value = doctor.name;
+                document.getElementById('dob').value = doctor.dob;
+                document.getElementById('doj').value = doctor.doj;
+                document.getElementById('department').value = doctor.department;
+                document.getElementById('specialization').value = doctor.specialization;
+                document.getElementById('consultations').value = doctor.consultations;
+                document.getElementById('salary').value = doctor.salary;
+                $('#doctorModal').modal('show');
+            }
+
+            if (e.target.classList.contains('disableBtn')) {
+                const index = e.target.dataset.index;
+                doctorData[index].disabled = !doctorData[index].disabled;
+                renderDoctorList();
+            }
+        });
+
+        renderDoctorList();
+    </script>
+</body>
+
+</html>

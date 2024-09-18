@@ -1,0 +1,126 @@
+/* General Page Styles */
+body {
+    background: linear-gradient(to right, #ffffff, #22AFB2);
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin-top: 70px;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 80px;
+    color: #343a40;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.header .actions {
+    display: flex;
+    gap: 10px;
+}
+
+.medicine-table {
+    width: 100%;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.medicine-table th, 
+.medicine-table td {
+    padding: 15px;
+    text-align: center;
+}
+
+.medicine-table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+.medicine-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.medicine-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-header .close {
+    color: white;
+}
+
+/* Input Field Styles */
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Form Styles */
+form .form-group {
+    margin-bottom: 20px;
+}
+
+/* Search Bar Styles */
+#searchMed {
+    width: 300px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+#searchMed:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+

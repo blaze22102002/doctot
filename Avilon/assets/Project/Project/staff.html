@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Details</title>
+    <link rel="stylesheet" href="staff.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container"><br><br>
+        <h1 style="font-size: 70px;">Staff Details</h1>
+        <div class="header">
+            <div class="actions">
+                <button id="addStaffBtn" class="btn btn-primary">Add New Staff</button>
+                <button id="backBtn" class="btn btn-secondary">Back to Main</button>
+            </div>
+            <input type="text" id="searchStaff" class="form-control" placeholder="Search Staff">
+        </div>
+        <table class="staff-table table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Qualification</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="staffList">
+                <!-- Staff records will be added here -->
+            </tbody>
+        </table>
+        <div id="staffModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add/Edit Staff</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="staffForm">
+                            <input type="hidden" id="staffId">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" placeholder="Enter name" required
+                                    maxlength="200" pattern="[A-Za-z\s]+"
+                                    title="Name should only contain letters and spaces.">
+                            </div>
+                            <div class="form-group">
+                                <label for="age">Age</label>
+                                <input type="number" class="form-control" id="age" placeholder="Enter age" required
+                                    min="18" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" placeholder="Enter address"
+                                    required pattern="[A-Za-z0-9\s,]+"
+                                    title="Address can contain letters, numbers, and commas.">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="text" class="form-control" id="phone" placeholder="Enter phone number"
+                                    required pattern="\d{10}" maxlength="10"
+                                    title="Phone number should contain exactly 10 digits.">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="qualification">Qualification</label>
+                                <input type="text" class="form-control" id="qualification"
+                                    placeholder="Enter qualification" required pattern="[A-Za-z\s]+"
+                                    title="Qualification should only contain letters and spaces.">
+                            </div>
+                            <div class="form-group">
+                                <label for="role">Role</label>
+                                <input type="text" class="form-control" id="role" placeholder="Enter role" required
+                                    pattern="[A-Za-z\s]+" title="Role should only contain letters and spaces.">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let staffData = [];
+
+    // Function to save staff data to localStorage
+    function saveToLocalStorage() {
+        localStorage.setItem('staffData', JSON.stringify(staffData));
+    }
+
+    // Function to load staff data from localStorage
+    function loadFromLocalStorage() {
+        const savedData = localStorage.getItem('staffData');
+        if (savedData) {
+            return JSON.parse(savedData);
+        }
+        return [];
+    }
+
+    // Function to render the staff list table
+    function renderStaffList() {
+        const staffList = document.getElementById('staffList');
+        staffList.innerHTML = '';
+        staffData.forEach((staff, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${staff.name}</td>
+                <td>${staff.age}</td>
+                <td>${staff.address}</td>
+                <td>${staff.phone}</td>
+                <td>${staff.email}</td>
+                <td>${staff.qualification}</td>
+                <td>${staff.role}</td>
+                <td>${staff.disabled ? 'Disabled' : 'Active'}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm editBtn" data-index="${index}" ${staff.disabled ? 'disabled' : ''}>Edit</button>
+                    <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${staff.disabled ? 'Enable' : 'Disable'}</button>
+                </td>
+            `;
+            staffList.appendChild(row);
+        });
+    }
+
+    // Event listener to handle adding a new staff member
+    document.getElementById('addStaffBtn').addEventListener('click', function () {
+        document.getElementById('staffForm').reset();
+        document.getElementById('staffId').value = '';
+        $('#staffModal').modal('show');
+    });
+
+    // Event listener to handle form submission (Add/Edit staff)
+    document.getElementById('staffForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Get form values
+        const name = document.getElementById('name').value;
+        const age = document.getElementById('age').value;
+        const address = document.getElementById('address').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        const qualification = document.getElementById('qualification').value;
+        const role = document.getElementById('role').value;
+
+        // Validate name (Only letters and spaces, max 200 chars)
+        const namePattern = /^[A-Za-z\s]{1,200}$/;
+        if (!namePattern.test(name)) {
+            alert('Name should contain only letters and be up to 200 characters.');
+            return;
+        }
+
+        // Validate address (Letters, numbers, and commas allowed)
+        const addressPattern = /^[A-Za-z0-9\s,]+$/;
+        if (!addressPattern.test(address)) {
+            alert('Address should contain letters, numbers, and commas.');
+            return;
+        }
+
+        // Validate phone (Should contain exactly 10 digits)
+        const phonePattern = /^\d{10}$/;
+        if (!phonePattern.test(phone)) {
+            alert('Phone number should contain exactly 10 digits.');
+            return;
+        }
+
+        // Validate qualification (Only letters and spaces)
+        const letterPattern = /^[A-Za-z\s]+$/;
+        if (!letterPattern.test(qualification)) {
+            alert('Qualification should only contain letters.');
+            return;
+        }
+
+        // Validate role (Only letters and spaces)
+        if (!letterPattern.test(role)) {
+            alert('Role should only contain letters.');
+            return;
+        }
+
+        // If validation passes, proceed with form submission
+        const id = document.getElementById('staffId').value;
+
+        // Editing an existing staff member
+        if (id !== '') {
+            staffData[id] = { name, age, address, phone, email, qualification, role, disabled: staffData[id].disabled };
+        } else {
+            // Adding a new staff member
+            staffData.push({ name, age, address, phone, email, qualification, role, disabled: false });
+        }
+
+        // Save the updated staff data to localStorage
+        saveToLocalStorage();
+
+        // Close the modal
+        $('#staffModal').modal('hide');
+
+        // Re-render the staff list
+        renderStaffList();
+    });
+
+    // Event listener to handle editing and disabling/enabling staff
+    document.getElementById('staffList').addEventListener('click', function (e) {
+        if (e.target.classList.contains('editBtn')) {
+            const index = e.target.dataset.index;
+            const staff = staffData[index];
+            document.getElementById('staffId').value = index;
+            document.getElementById('name').value = staff.name;
+            document.getElementById('age').value = staff.age;
+            document.getElementById('address').value = staff.address;
+            document.getElementById('phone').value = staff.phone;
+            document.getElementById('email').value = staff.email;
+            document.getElementById('qualification').value = staff.qualification;
+            document.getElementById('role').value = staff.role;
+            $('#staffModal').modal('show');
+        }
+
+        if (e.target.classList.contains('disableBtn')) {
+            const index = e.target.dataset.index;
+            staffData[index].disabled = !staffData[index].disabled;
+            saveToLocalStorage();
+            renderStaffList();
+        }
+    });
+
+    // Event listener to handle staff search
+    document.getElementById('searchStaff').addEventListener('input', function () {
+        const query = this.value.toLowerCase();
+        const filteredStaff = staffData.filter(staff => staff.name.toLowerCase().includes(query));
+        const staffList = document.getElementById('staffList');
+        staffList.innerHTML = '';
+        filteredStaff.forEach((staff, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${staff.name}</td>
+                <td>${staff.age}</td>
+                <td>${staff.address}</td>
+                <td>${staff.phone}</td>
+                <td>${staff.email}</td>
+                <td>${staff.qualification}</td>
+                <td>${staff.role}</td>
+                <td>${staff.disabled ? 'Disabled' : 'Active'}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm editBtn" data-index="${index}" ${staff.disabled ? 'disabled' : ''}>Edit</button>
+                    <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${staff.disabled ? 'Enable' : 'Disable'}</button>
+                </td>
+            `;
+            staffList.appendChild(row);
+        });
+    });
+
+    // Event listener to handle back button
+    document.getElementById('backBtn').addEventListener('click', function() {
+        window.location.href = 'admin.html'; // Change 'index.html' to your main page URL
+    });
+
+    // Load initial data from localStorage
+    staffData = loadFromLocalStorage();
+    renderStaffList();
+
+</script>
+
+</body>
+
+</html>

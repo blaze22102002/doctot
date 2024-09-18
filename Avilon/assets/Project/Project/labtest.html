@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Test Management</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="labtest.css">
+</head>
+<body>
+    <div class="container">
+        <h1>List of Lab Test</h1>
+        <div class="header">
+            <div class="actions">
+                <button id="addLabTestBtn" class="btn btn-primary">Add New Lab Test</button>
+                <button id="backBtn" class="btn btn-secondary">Back to Main</button>
+            </div>
+            <input type="text" id="searchLabTest" class="form-control mt-2" placeholder="Search Lab Tests">
+        </div>
+        <table class="labtest-table table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Test Code</th>
+                    <th>Patient Name</th>
+                    <th>Test Name</th>
+                    <th>High Range</th>
+                    <th>Low Range</th>
+                    <th>Actual Range</th>
+                    <th>Remarks</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="labtestList">
+                <!-- Static Lab test records will be added here -->
+            </tbody>
+        </table>
+
+        <!-- Modal for adding/editing lab test -->
+        <div id="labTestModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add/Edit Lab Test</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="labTestForm">
+                            <input type="hidden" id="labTestId">
+                            <div class="form-group">
+                                <label for="patientName">Patient Name</label>
+                                <input type="text" class="form-control" id="patientName" placeholder="Enter patient name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="testName">Test Name</label>
+                                <input type="text" class="form-control" id="testName" placeholder="Enter test name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="highRange">High Range</label>
+                                <input type="text" class="form-control" id="highRange" placeholder="Enter high range" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lowRange">Low Range</label>
+                                <input type="text" class="form-control" id="lowRange" placeholder="Enter low range" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="actualRange">Actual Range</label>
+                                <input type="text" class="form-control" id="actualRange" placeholder="Enter actual range" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="remarks">Remarks</label>
+                                <textarea class="form-control" id="remarks" placeholder="Enter remarks" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const labTestData = [
+            { id: "TC001", patientName: "John Doe", testName: "Blood Test", highRange: "6.0", lowRange: "4.5", actualRange: "5.1", remarks: "Normal", disabled: false },
+            { id: "TC002", patientName: "Jane Smith", testName: "Cholesterol Test", highRange: "200", lowRange: "100", actualRange: "180", remarks: "Slightly high", disabled: false },
+            { id: "TC003", patientName: "David Brown", testName: "Glucose Test", highRange: "100", lowRange: "70", actualRange: "95", remarks: "Normal", disabled: true }
+        ];
+
+        function renderLabTestList() {
+            const labtestList = document.getElementById('labtestList');
+            labtestList.innerHTML = '';
+            labTestData.forEach((test, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${test.id}</td>
+                    <td>${test.patientName}</td>
+                    <td>${test.testName}</td>
+                    <td>${test.highRange}</td>
+                    <td>${test.lowRange}</td>
+                    <td>${test.actualRange}</td>
+                    <td>${test.remarks}</td>
+                    <td>${test.disabled ? 'Disabled' : 'Active'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm editBtn" data-index="${index}">Edit</button>
+                        <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${test.disabled ? 'Enable' : 'Disable'}</button>
+                    </td>
+                `;
+                labtestList.appendChild(row);
+            });
+        }
+
+        document.getElementById('addLabTestBtn').addEventListener('click', function() {
+            document.getElementById('labTestForm').reset();
+            document.getElementById('labTestId').value = '';
+            $('#labTestModal').modal('show');
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.location.href = 'admin.html'; // Update this path if needed
+        });
+
+        document.getElementById('labTestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('labTestId').value;
+            const patientName = document.getElementById('patientName').value;
+            const testName = document.getElementById('testName').value;
+            const highRange = document.getElementById('highRange').value;
+            const lowRange = document.getElementById('lowRange').value;
+            const actualRange = document.getElementById('actualRange').value;
+            const remarks = document.getElementById('remarks').value;
+
+            if (id !== '') {
+                const index = labTestData.findIndex(test => test.id === id);
+                labTestData[index] = { id, patientName, testName, highRange, lowRange, actualRange, remarks, disabled: labTestData[index].disabled };
+            } else {
+                labTestData.push({ id: `TC${('000' + (labTestData.length + 1)).slice(-3)}`, patientName, testName, highRange, lowRange, actualRange, remarks, disabled: false });
+            }
+
+            $('#labTestModal').modal('hide');
+            renderLabTestList();
+        });
+
+        document.getElementById('labtestList').addEventListener('click', function(e) {
+            if (e.target.classList.contains('editBtn')) {
+                const index = e.target.dataset.index;
+                const test = labTestData[index];
+                document.getElementById('labTestId').value = test.id;
+                document.getElementById('patientName').value = test.patientName;
+                document.getElementById('testName').value = test.testName;
+                document.getElementById('highRange').value = test.highRange;
+                document.getElementById('lowRange').value = test.lowRange;
+                document.getElementById('actualRange').value = test.actualRange;
+                document.getElementById('remarks').value = test.remarks;
+                $('#labTestModal').modal('show');
+            }
+
+            if (e.target.classList.contains('disableBtn')) {
+                const index = e.target.dataset.index;
+                labTestData[index].disabled = !labTestData[index].disabled;
+                renderLabTestList();
+            }
+        });
+
+        document.getElementById('searchLabTest').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const labtestList = document.getElementById('labtestList');
+            labtestList.innerHTML = '';
+            labTestData.forEach((test, index) => {
+                if (
+                    !test.disabled && (
+                    test.id.toLowerCase().includes(query) ||
+                    test.patientName.toLowerCase().includes(query) ||
+                    test.testName.toLowerCase().includes(query) ||
+                    test.highRange.toLowerCase().includes(query) ||
+                    test.lowRange.toLowerCase().includes(query) ||
+                    test.actualRange.toLowerCase().includes(query) ||
+                    test.remarks.toLowerCase().includes(query)
+                )) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${test.id}</td>
+                        <td>${test.patientName}</td>
+                        <td>${test.testName}</td>
+                        <td>${test.highRange}</td>
+                        <td>${test.lowRange}</td>
+                        <td>${test.actualRange}</td>
+                        <td>${test.remarks}</td>
+                        <td>${test.disabled ? 'Disabled' : 'Active'}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm editBtn" data-index="${index}">Edit</button>
+                            <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${test.disabled ? 'Enable' : 'Disable'}</button>
+                        </td>
+                    `;
+                    labtestList.appendChild(row);
+                }
+            });
+        });
+
+        renderLabTestList();
+    </script>
+</body>
+</html>

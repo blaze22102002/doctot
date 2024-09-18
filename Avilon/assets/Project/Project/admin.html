@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand logo" href="Avilon/index.html">Welcome!.. to Admin's Dashboard</a>
+            <div class="ml-auto"> 
+                <a class="btn logout-btn" id="logoutBtn" href="C:/Users/Bipin Sunmy P/Downloads/Avilon/Avilon/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+        
+        <div class="row main-content">
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="management-box" id="staffManagement">
+                    <h3>Staff Management</h3>
+                    <div class="hover-box">
+                        <a href="staff.html" id="staffLink">Staff</a><br>
+                        <a href="doctor .html" id="doctorLink">Doctors</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <a href="medicine.html" class="management-link">
+                    <div class="management-box">
+                        <h3>Medicine Management</h3>
+                    </div>
+                </a>
+            </div>            
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <a href="labtest.html" class="management-link">
+                    <div class="management-box">
+                        <h3>Lab Test Management</h3>
+                    </div>
+                </a>
+            </div>
+            
+        </div>
+
+        <!-- Social Media Links -->
+        <!-- <div class="icons anim text-center">
+            <ul class="list-inline">
+                <li class="list-inline-item"><i class="fab fa-twitter"></i></li>
+                <li class="list-inline-item"><i class="fab fa-whatsapp"></i></li>
+                <li class="list-inline-item"><i class="fab fa-instagram"></i></li>
+            </ul>
+        </div> -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("logoutBtn").addEventListener("click", function () {
+            window.location.href = "login.html";
+        });
+    </script>
+</body>
+
+</html>

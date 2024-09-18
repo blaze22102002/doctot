@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Management</title>
+    <link rel="stylesheet" href="medicine.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Medicine Management</h1><br><br>
+        <div class="header">
+            <div class="actions">
+                <button id="addMedBtn" class="btn btn-primary">Add New Medicine</button>
+                <button id="backBtn" class="btn btn-secondary">Back to Main</button>
+            </div>
+            <input type="text" id="searchMed" class="form-control" placeholder="Search Medicine">
+        </div>
+        <table class="medicine-table table table-striped">
+            <thead>
+                <tr>
+                    <th>Medicine Code</th>
+                    <th>Medicine Name</th>
+                    <th>Company</th>
+                    <th>Price (per strip)</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="medicineList">
+                <!-- Medicine records will be added here -->
+            </tbody>
+        </table>
+        <!-- Modal for adding/editing medicine -->
+        <div id="medicineModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add/Edit Medicine</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="medicineForm">
+                            <input type="hidden" id="medId">
+                            <div class="form-group">
+                                <label for="medName">Medicine Name</label>
+                                <input type="text" class="form-control" id="medName" placeholder="Enter name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyName">Company Name</label>
+                                <input type="text" class="form-control" id="companyName" placeholder="Enter company" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="medPrice">Price (per strip)</label>
+                                <input type="number" class="form-control" id="medPrice" placeholder="Enter price" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="medQuantity">Quantity</label>
+                                <input type="number" class="form-control" id="medQuantity" placeholder="Enter quantity" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const medicineData = [
+            { id: "M001", name: "Paracetamol", company: "PharmaCorp", price: 50, quantity: 100, disabled: false },
+            { id: "M002", name: "Ibuprofen", company: "HealthMed", price: 120, quantity: 200, disabled: false },
+            { id: "M003", name: "Amoxicillin", company: "MediCo", price: 200, quantity: 150, disabled: true }
+        ];
+
+        function renderMedicineList() {
+            const medicineList = document.getElementById('medicineList');
+            medicineList.innerHTML = '';
+            medicineData.forEach((med, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${med.id}</td>
+                    <td>${med.name}</td>
+                    <td>${med.company}</td>
+                    <td>${med.price}</td>
+                    <td>${med.quantity}</td>
+                    <td>${med.disabled ? 'Disabled' : 'Active'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm editBtn" data-index="${index}" ${med.disabled ? 'disabled' : ''}>Edit</button>
+                        <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${med.disabled ? 'Enable' : 'Disable'}</button>
+                        <button class="btn btn-success btn-sm updateQuantityBtn" data-index="${index}">Update Quantity</button>
+                    </td>
+                `;
+                medicineList.appendChild(row);
+            });
+        }
+
+        document.getElementById('addMedBtn').addEventListener('click', function() {
+            document.getElementById('medicineForm').reset();
+            document.getElementById('medId').value = '';
+            $('#medicineModal').modal('show');
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.location.href = 'admin.html'; 
+        });
+
+        document.getElementById('medicineForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('medId').value;
+            const name = document.getElementById('medName').value;
+            const company = document.getElementById('companyName').value;
+            const price = document.getElementById('medPrice').value;
+            const quantity = document.getElementById('medQuantity').value;
+
+            if (id !== '') {
+                medicineData[id] = { id: medicineData[id].id, name, company, price, quantity, disabled: medicineData[id].disabled };
+            } else {
+                const newId = `M00${medicineData.length + 1}`;
+                medicineData.push({ id: newId, name, company, price, quantity, disabled: false });
+            }
+
+            $('#medicineModal').modal('hide');
+            renderMedicineList();
+        });
+
+        document.getElementById('medicineList').addEventListener('click', function(e) {
+            if (e.target.classList.contains('editBtn')) {
+                const index = e.target.dataset.index;
+                const med = medicineData[index];
+                document.getElementById('medId').value = index;
+                document.getElementById('medName').value = med.name;
+                document.getElementById('companyName').value = med.company;
+                document.getElementById('medPrice').value = med.price;
+                document.getElementById('medQuantity').value = med.quantity;
+                $('#medicineModal').modal('show');
+            }
+
+            if (e.target.classList.contains('disableBtn')) {
+                const index = e.target.dataset.index;
+                medicineData[index].disabled = !medicineData[index].disabled;
+                renderMedicineList();
+            }
+
+            if (e.target.classList.contains('updateQuantityBtn')) {
+                const index = e.target.dataset.index;
+                const newQuantity = prompt("Enter the quantity to add:");
+                if (newQuantity && !isNaN(newQuantity)) {
+                    medicineData[index].quantity += parseInt(newQuantity);
+                    renderMedicineList();
+                }
+            }
+        });
+
+        document.getElementById('searchMed').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const medicineList = document.getElementById('medicineList');
+            medicineList.innerHTML = '';
+            medicineData.forEach((med, index) => {
+                if (
+                    !med.disabled && (
+                    med.id.toLowerCase().includes(query) ||
+                    med.name.toLowerCase().includes(query) ||
+                    med.company.toLowerCase().includes(query) ||
+                    med.price.toString().includes(query) ||
+                    med.quantity.toString().includes(query)
+                )) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${med.id}</td>
+                        <td>${med.name}</td>
+                        <td>${med.company}</td>
+                        <td>${med.price}</td>
+                        <td>${med.quantity}</td>
+                        <td>${med.disabled ? 'Disabled' : 'Active'}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm editBtn" data-index="${index}">Edit</button>
+                            <button class="btn btn-danger btn-sm disableBtn" data-index="${index}">${med.disabled ? 'Enable' : 'Disable'}</button>
+                            <button class="btn btn-success btn-sm updateQuantityBtn" data-index="${index}">Update Quantity</button>
+                        </td>
+                    `;
+                    medicineList.appendChild(row);
+                }
+            });
+        });
+
+        renderMedicineList();
+    </script>
+</body>
+</html>
